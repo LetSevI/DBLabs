@@ -1,4 +1,14 @@
-﻿CREATE TABLE Books (
+IF OBJECT_ID('Readers_Books', 'U') IS NOT NULL DROP TABLE Readers_Books;
+IF OBJECT_ID('Publishers_Books', 'U') IS NOT NULL DROP TABLE Publishers_Books;
+IF OBJECT_ID('Themes_Books', 'U') IS NOT NULL DROP TABLE Themes_Books; 
+IF OBJECT_ID('Authors_Books', 'U') IS NOT NULL DROP TABLE Authors_Books; 
+IF OBJECT_ID('Themes', 'U') IS NOT NULL DROP TABLE Themes; 
+IF OBJECT_ID('Readers', 'U') IS NOT NULL DROP TABLE Readers; 
+IF OBJECT_ID('Publishers', 'U') IS NOT NULL DROP TABLE Publishers; 
+IF OBJECT_ID('Authors', 'U') IS NOT NULL DROP TABLE Authors; 
+IF OBJECT_ID('Books', 'U') IS NOT NULL DROP TABLE Books; 
+
+CREATE TABLE Books (
 	Id				INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
 	Code			VARCHAR(20) NOT NULL UNIQUE,
 	Name			VARCHAR(100) NOT NULL,
@@ -11,14 +21,14 @@
 CREATE TABLE Authors (
 	Id			INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
 	FIO			VARCHAR(200) NOT NULL,
-	Phone		VARCHAR(10) NULL
+	Phone		VARCHAR(15) NULL
 )
 
 CREATE TABLE Publishers (
 	Id				INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
 	Name			VARCHAR(50) NOT NULL,
 	PAddress		VARCHAR(200) NOT NULL,
-	Phone			VARCHAR(10) NULL
+	Phone			VARCHAR(30) NULL
 )
 
 CREATE TABLE Readers (
@@ -60,7 +70,6 @@ CREATE TABLE Readers_Books (
 	ReturnDate		DATE NULL
 )
 
-
 INSERT INTO Authors VALUES 
 	('Пушкин А.С', NULL),
 	('Лермонтов М.Ю', NULL),
@@ -68,7 +77,7 @@ INSERT INTO Authors VALUES
 	('Гоголь Н.В', NULL),
 	('Достоевский Ф.М', NULL),
 	('Ахматова А.А', NULL),
-	('Бродский И.А', NULL),
+	('Бродский И.А', '+79998883343'),
 	('Демидович Б.П', NULL),
 	('Тер-Крикоров А.М', '+79998887766'),
 	('Пелевин В.О', NULL)
@@ -159,13 +168,13 @@ INSERT INTO Publishers_Books VALUES
 	(10, 4)
 	
 INSERT INTO Readers_Books VALUES
-	(1, 1, "2017-08-01", 12, NULL),
-	(2, 3, "2017-08-05", 13, "2017-09-01"),
-	(3, 4, "2017-09-01", 10, NULL),
-	(7, 9, "2017-05-01", 9, "2017-06-01"),
-	(1, 1, "2017-06-01", 8, NULL),
-	(5, 6, "2017-07-01", 7, NULL),
-	(8, 3, "2017-08-01", 10, "2017-10-10"),
-	(8, 5, "2017-09-03", 12, NULL),
-	(2, 9, "2017-08-04", 14 NULL),
-	(1, 3, "2017-08-10", 4, NULL),
+	(1, 1, '2017-08-01', 12, NULL),
+	(2, 3, '2017-08-05', 13, '2017-09-01'),
+	(3, 4, '2017-09-01', 10, NULL),
+	(7, 9, '2017-05-01', 9, '2017-06-01'),
+	(1, 1, '2017-06-01', 8, NULL),
+	(5, 6, '2017-07-01', 7, NULL),
+	(8, 3, '2017-08-01', 10, '2017-10-10'),
+	(8, 5, '2017-09-03', 12, NULL),
+	(2, 9, '2017-08-04', 14, NULL),
+	(1, 3, '2017-08-10', 4, NULL)
