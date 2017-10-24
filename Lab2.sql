@@ -1,22 +1,12 @@
 IF OBJECT_ID('Readers_Books', 'U') IS NOT NULL DROP TABLE Readers_Books;
-IF OBJECT_ID('Publishers_Books', 'U') IS NOT NULL DROP TABLE Publishers_Books;
 IF OBJECT_ID('Themes_Books', 'U') IS NOT NULL DROP TABLE Themes_Books; 
 IF OBJECT_ID('Authors_Books', 'U') IS NOT NULL DROP TABLE Authors_Books; 
 IF OBJECT_ID('Themes', 'U') IS NOT NULL DROP TABLE Themes; 
 IF OBJECT_ID('Readers', 'U') IS NOT NULL DROP TABLE Readers; 
-IF OBJECT_ID('Publishers', 'U') IS NOT NULL DROP TABLE Publishers; 
 IF OBJECT_ID('Authors', 'U') IS NOT NULL DROP TABLE Authors; 
-IF OBJECT_ID('Books', 'U') IS NOT NULL DROP TABLE Books; 
-
-CREATE TABLE Books (
-	Id				INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
-	Code			VARCHAR(20) NOT NULL UNIQUE,
-	Name			VARCHAR(100) NOT NULL,
-	ProductionYear	INT NOT NULL,
-	Cost			MONEY NOT NULL,
-	Amount			INT NOT NULL,
-	Condition		VARCHAR(50)	DEFAULT('Хорошее') NOT NULL
-)
+IF OBJECT_ID('Copies', 'U') IS NOT NULL DROP TABLE Copies;
+IF OBJECT_ID('Books', 'U') IS NOT NULL DROP TABLE Books;
+IF OBJECT_ID('Publishers', 'U') IS NOT NULL DROP TABLE Publishers;
 
 CREATE TABLE Authors (
 	Id			INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
@@ -29,6 +19,22 @@ CREATE TABLE Publishers (
 	Name			VARCHAR(50) NOT NULL,
 	PAddress		VARCHAR(200) NOT NULL,
 	Phone			VARCHAR(30) NULL
+)
+
+CREATE TABLE Books (
+	Id				INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+	Code			VARCHAR(20) NOT NULL UNIQUE,
+	Name			VARCHAR(100) NOT NULL,
+	ProductionYear	INT NOT NULL,
+	Cost			MONEY NOT NULL,
+	Amount			INT NOT NULL,
+	Publisher		INT NOT NULL FOREIGN KEY REFERENCES Publishers(Id)
+)
+
+CREATE TABLE Copies (
+	Id				INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+	BookId			INT NOT NULL FOREIGN KEY REFERENCES Books(Id),
+	Condition		VARCHAR(50)	DEFAULT('Хорошее') NOT NULL
 )
 
 CREATE TABLE Readers (
@@ -55,16 +61,10 @@ CREATE TABLE Themes_Books (
 	PRIMARY KEY(ThemeId, BookId)
 )
 
-CREATE TABLE Publishers_Books (
-	PublisherId		INT NOT NULL FOREIGN KEY REFERENCES Publishers(Id),
-	BookId			INT NOT NULL FOREIGN KEY REFERENCES Books(Id),
-	PRIMARY KEY(PublisherId, BookId)
-)
-
 CREATE TABLE Readers_Books (
 	Id				INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
 	ReaderId		INT NOT NULL FOREIGN KEY REFERENCES Readers(Id),
-	BookId			INT NOT NULL FOREIGN KEY REFERENCES Books(Id),
+	CopiesId		INT NOT NULL FOREIGN KEY REFERENCES Copies(Id),
 	DateOfIssue		DATE NOT NULL,
 	TimeConstraint	INT NOT NULL,
 	ReturnDate		DATE NULL
@@ -119,17 +119,30 @@ INSERT INTO Themes VALUES
 	('Художественная', NULL)
 	
 INSERT INTO Books VALUES
-	('ADEGFE', 'Сказка о рыбаке и рыбке', 1991, 100, 12, 'Хорошее'),
-	('ADQMDE', 'Спящая красавица', 1992, 150, 11, 'Плохое'),
-	('ADSDEE', 'Красавица и чудовище', 1999, 1230, 10, 'Отличное'),
-	('ARRRRE', 'Гарри Поттер', 2003, 1430, 13, 'Ужасное'),
-	('ATTTTE', 'Математика', 2017, 130, 15, 'Хорошее'),
-	('ADEFFE', 'Энциклопедия', 2005, 1400, 16, 'Плохое'),
-	('ADRRFE', 'Сказка о золотой рыбке', 1991, 1600, 14, 'Нормально'),
-	('AMMMME', 'Золушка', 1999, 1700, 17, 'Плохое'),
-	('APOIFE', 'CLR via C#', 2016, 1800, 82, 'Ужасное'),
-	('ACSDFE', '500 по Фаренгейту', 1990, 90, 92, 'Отличное'),
-	('ADTYFE', 'Сказка о рыбаке и рыбке', 1995, 100, 12, 'Хорошее')	
+	('ADEGFE', 'Сказка о рыбаке и рыбке', 1991, 100, 12, 1),
+	('ADQMDE', 'Спящая красавица', 1992, 150, 11, 2),
+	('ADSDEE', 'Красавица и чудовище', 1999, 1230, 10, 4),
+	('ARRRRE', 'Гарри Поттер', 2003, 1430, 13, 5),
+	('ATTTTE', 'Математика', 2017, 130, 15, 1),
+	('ADEFFE', 'Энциклопедия', 2005, 1400, 16, 3),
+	('ADRRFE', 'Сказка о золотой рыбке', 1991, 1600, 14, 4),
+	('AMMMME', 'Золушка', 1999, 1700, 17, 4),
+	('APOIFE', 'CLR via C#', 2016, 1800, 82, 4),
+	('ACSDFE', '500 по Фаренгейту', 1990, 90, 92, 4),
+	('ADTYFE', 'Сказка о рыбаке и рыбке', 1995, 100, 12, 4)
+	
+INSERT INTO Copies VALUES
+	(1, 'Хорошее'),
+	(1, 'Плохое'),
+	(1, 'Ужасное'),
+	(4, 'Хорошее'),
+	(5, 'Отличное'),
+	(6, 'Ужасное'),
+	(2, 'Хорошее'),
+	(4, 'Отличное'),
+	(2, 'Сносное'),
+	(4, 'Нормальное'),
+	(9, 'Плохое')
 	
 INSERT INTO Authors_Books VALUES
 	(1, 1),
@@ -154,18 +167,6 @@ INSERT INTO Themes_Books VALUES
 	(8, 3),
 	(9, 2),
 	(10, 1)
-	
-INSERT INTO Publishers_Books VALUES
-	(1, 10),
-	(2, 10),
-	(3, 8),
-	(4, 7),
-	(5, 10),
-	(6, 9),
-	(7, 8),
-	(8, 2),
-	(9, 3),
-	(10, 4)
 	
 INSERT INTO Readers_Books VALUES
 	(1, 1, '2017-08-01', 12, NULL),
